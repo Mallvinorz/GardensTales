@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.5882353}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.72156864}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -258,22 +258,27 @@ MonoBehaviour:
     itemName: Pumpkin Seed
     itemPrize: 12
     seedBag: {fileID: 6093102394419139505, guid: bab60f99651596549a75424dedbc9ebf, type: 3}
+    type: 0
   - itemData: {fileID: 11400000, guid: a69f9fef61c0c804d8c6b54659aa7cff, type: 2}
     itemName: Tomato Seed
     itemPrize: 12
     seedBag: {fileID: 6093102394419139505, guid: a2385592e44957f438df0f32ef30cdf9, type: 3}
+    type: 0
   - itemData: {fileID: 11400000, guid: 6e3901a4f24005a49b29002df3e25f7e, type: 2}
     itemName: Corn Seed
     itemPrize: 12
     seedBag: {fileID: 6093102394419139505, guid: cc75b8887f26d1d40a709e83ff241d2b, type: 3}
+    type: 0
   - itemData: {fileID: 11400000, guid: 46eb125f3775bba4cabaf9862fa070eb, type: 2}
     itemName: Carrot Seed
     itemPrize: 12
     seedBag: {fileID: 6093102394419139505, guid: 19bcb817dc61a9147b98aecd524c525c, type: 3}
+    type: 0
   containerMenu: {fileID: 6307931225584126329}
   canvasHUD: {fileID: 0}
   areaMarket: {fileID: 6307931225937302002}
   marketMenuUI: {fileID: 6307931225927969507}
+  inventoryUI: {fileID: 0}
   prefabMenuListButton: {fileID: 6164401659078128601, guid: e51276c69ab8cc5499c0d438b2cf0988, type: 3}
   alertUI: {fileID: 6307931224493368746}
   player: {fileID: 0}

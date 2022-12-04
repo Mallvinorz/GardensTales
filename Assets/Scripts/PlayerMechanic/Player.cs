@@ -27,17 +27,30 @@ public class Player : MonoBehaviour {
     [Header("Audio SFX")]
     [SerializeField] AudioSource grassFootStep;
     [SerializeField] AudioSource footStep;
+    [SerializeField] AudioSource runFootStep;
+    [SerializeField] AudioSource damagedSfx;
     public bool canMove = true;
     private Inventory inventory;
 
     [Header("Save Plant State Controller")]
     [SerializeField] SavePlantController savePlantController;
+    [Header("Enemy Indicator")]
+    [SerializeField] GameObject enemyIndicatorPrefab;
+    [SerializeField] GameObject enemyIndicatorContainer;
+    [SerializeField] List<GameObject> instantiatedEnemyIndicators;
+    [Header("Game Over")]
+    [SerializeReference] PauseMenu pauseMenu;
     private void Start() {
         inventory =  GameObject.FindGameObjectWithTag("Inventory")? GameObject.FindGameObjectWithTag("Inventory").GetComponent<Inventory>() : null;
-        if(sceneInfo.lifePoint <= 0) Debug.Log("Game Over");
     }
     // Update is called once per frame
     private void Update() {
+        
+        if(sceneInfo.lifePoint <= 0) pauseMenu.isGameOver = true;
+
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemies");
+        ShowEnemyIndicator(enemies);
+
         isWalking = true;
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
@@ -50,7 +63,9 @@ public class Player : MonoBehaviour {
         if(canMove) this.transform.Translate(movement, Space.World);
         AnimateRunOrWalk(movement.magnitude, isWalking);
         if(movement.magnitude > 0){
-            PlaySFXFootStep();
+            if(isWalking) PlaySFXFootStep(footStep);
+            else  PlaySFXFootStep(runFootStep);
+            
             CreateDust();
         }
 //end section
@@ -88,8 +103,7 @@ public class Player : MonoBehaviour {
     }
     // interaction
     public void PickUpItem(){
-        try
-        {
+        try{
             if(collectibleItem){
                 Collectible collectible = collectibleItem.GetComponent<Collectible>();
 
@@ -136,7 +150,7 @@ public class Player : MonoBehaviour {
     private void Exhausted(){
         sceneInfo.gameTime += 2;
         sceneInfo.dayTime = 6;
-        sceneInfo.playerStamina = 0.7f;
+        sceneInfo.playerStamina = 70f;
         sceneInfo.lifePoint -= 1;
 
         if(SceneManager.GetActiveScene().name == "Farm") savePlantController.SaveCurrentData();
@@ -147,7 +161,38 @@ public class Player : MonoBehaviour {
         dust.Play();
     }
     // SFX GOES HERE
-    void PlaySFXFootStep(){
-        if(!footStep.isPlaying) footStep.Play();
+    void PlaySFXFootStep(AudioSource audioStep){
+        if(!audioStep.isPlaying) audioStep.Play();
+    }
+
+    void ShowEnemyIndicator(GameObject[] enemies){
+        if(enemies.Length == 0) ClearEnemyIndicator();
+
+        if(GameObject.FindGameObjectsWithTag("Enemy Indicator").Length != instantiatedEnemyIndicators.Count) ClearEnemyIndicator();
+        
+        if(enemies.Length != instantiatedEnemyIndicators.Count){
+            
+            ClearEnemyIndicator();
+            foreach (var enemy in enemies){
+                GameObject newIndicator = Instantiate(enemyIndicatorPrefab, enemyIndicatorContainer.transform);
+                newIndicator.GetComponent<EnemyIndicatorController>().enemy = enemy;
+                instantiatedEnemyIndicators.Add(newIndicator);
+            }
+        }
+    }
+
+    void ClearEnemyIndicator(){
+        foreach (var indicator in instantiatedEnemyIndicators){
+            Destroy(indicator);
+        }
+        instantiatedEnemyIndicators.Clear();
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        if(other.gameObject.tag == "Enemies"){
+            // if(damagedSfx.isPlaying  ) damagedSfx.Stop();
+            damagedSfx.Play();
+            sceneInfo.playerStamina -= 10;
+        }
     }
 }

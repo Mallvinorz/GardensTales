@@ -56,6 +56,15 @@ public class LightingController : MonoBehaviour
 
     private void UpdateLighting(float timePercent)
     {
+        if(SceneManager.GetActiveScene().name != "Home"){
+            if(timePercent > 0.3f && timePercent < 0.7f){
+                DirectionalLight.intensity = 1;
+            }else{
+                float currentIntensity = DirectionalLight.intensity;
+                DirectionalLight.intensity = Mathf.Clamp(1 - (timePercent - 0.01f), 0.5f, 1f);
+            }
+        }
+        // DirectionalLight.intensity = Mathf.Clamp(DirectionalLight.intensity - 0.1f, 0.1f, 1f);
         //Set ambient and fog
         RenderSettings.ambientLight = Preset.AmbientColor.Evaluate(timePercent);
         RenderSettings.fogColor = Preset.FogColor.Evaluate(timePercent);
@@ -97,7 +106,6 @@ public class LightingController : MonoBehaviour
     }
     private bool RainWheater(){
         int rInt = Random.Range(0, 100);
-        Debug.Log(rInt);
         return rInt >= 60? true : false;
     }
 }

@@ -20,6 +20,11 @@ public class ToolsMechanic : MonoBehaviour
     [SerializeField] private AudioSource swingSFX;
     [SerializeField] private AudioSource impactSFX;
     [SerializeField] private AudioSource wateringSFX;
+    [Header("Enemy Properties")]
+    [SerializeField] private ParticleSystem smokeEffect;
+    [SerializeField] private ParticleSystem coinEffect;
+    [SerializeField] private AudioSource enemyDieSFX;
+    [SerializeField] private AudioSource coinSFX;
     // Update is called once per frame
     void Update()
     {
@@ -116,6 +121,11 @@ public class ToolsMechanic : MonoBehaviour
                 other.gameObject.GetComponent<Plants>().Watered();
             }
         }
+        if(other.gameObject.tag == "Enemies"){
+            if(isUsingTools && lastUsedAnimation == "Sword"){
+                KillEnemy(other.gameObject);
+            }
+        }
     }
     private void OnTriggerStay(Collider other) {
         if(other.gameObject.tag == "Plant") {
@@ -135,6 +145,11 @@ public class ToolsMechanic : MonoBehaviour
 
             }
         }
+        if(other.gameObject.tag == "Enemies"){
+            if(isUsingTools && lastUsedAnimation == "Sword"){
+                KillEnemy(other.gameObject);
+            }
+        }
     }
     private Vector3 GetWateredPlantLocation(){
         return tileSystem.SnapObjCoordinateToGrid(wateredLocation.transform.position);
@@ -145,5 +160,25 @@ public class ToolsMechanic : MonoBehaviour
             currentStamina -= staminaUsed;
             sceneInfo.playerStamina = currentStamina;
         }
+    }
+
+    private void KillEnemy(GameObject enemy){
+        Vector3 copyPosition = enemy.transform.localPosition + Vector3.zero;
+        Quaternion copyRotation = Quaternion.Euler(Vector3.zero) * enemy.transform.localRotation;
+
+        ParticleSystem smokeParticle = Instantiate(smokeEffect, copyPosition, copyRotation);
+        ParticleSystem coinParticle = Instantiate(coinEffect, copyPosition, copyRotation);
+        smokeParticle.Play();
+        coinParticle.Play();
+
+        if(!enemyDieSFX.isPlaying) enemyDieSFX.Play();
+        if(!coinSFX.isPlaying) coinSFX.Play();
+
+        sceneInfo.money += 10;//gain 10 gold when kill enemy
+        
+        Destroy(smokeParticle.gameObject, 1f);
+        Destroy(coinParticle.gameObject, 1f);
+        // play sfx
+        Destroy(enemy.gameObject);
     }
 }
