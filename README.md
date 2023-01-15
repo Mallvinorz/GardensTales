@@ -1,4 +1,3 @@
-# Tandoor
+# Garden's Tale
 
-Farming Simulation Game
-coming soon!
+3D Isometric Farming Simulation Game
